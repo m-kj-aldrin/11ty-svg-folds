@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "dev": "npx @11ty/eleventy --incremental --serve"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^2.0.0-canary.11"
+  }
+}

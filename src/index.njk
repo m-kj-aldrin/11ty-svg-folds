@@ -1,0 +1,115 @@
+---
+layout: base.njk
+---
+
+{% edge "njk" %}
+<svg width="100%" height="100%" viewBox="0 0 256 256" id="svg-illu">
+    <defs>
+        {# filter defs #}
+        <filter id="filter-scrible">
+            <feTurbulence seed="1" type="fractalNoise" baseFrequency="1"/>
+            <feColorMatrix type="matrix"
+            values="
+                0.25 0 0 0 0
+                0 0.25 0 0 0
+                0 0 0 0 0
+                0 0 0 0 0"/>
+            <feDisplacementMap in="SourceGraphic" xChannelSelector="R" yChannelSelector="G" scale="1.5"/>
+            <feGaussianBlur stdDeviation="0.05"/>
+            <feColorMatrix type="matrix"
+            values="
+                1 0 0 0 0
+                0 1 0 0 0
+                0 0 1 0 0
+                0 0 0 3 -1"/>
+        </filter>
+        <filter id="filter-grain" x="0" y="0" width="100%" height="100%">
+            <feTurbulence seed="1" type="fractalNoise" baseFrequency="2"/>
+            <feColorMatrix type="saturate" values="0"/>
+            {% set contrast = 4 %}
+            <feColorMatrix type="matrix"
+            values="
+                {{ contrast }} 0 0 0 -{{ (contrast - 1) / 4 }}
+                0 {{ contrast }} 0 0 -{{ (contrast - 1) / 4 }}
+                0 0 {{ contrast }} 0 -{{ (contrast - 1) / 4 }}
+                0 0 0 1 0"/>
+        </filter>
+        {# pattern defs #}
+        {% set patternSize = 8 %}
+        <pattern id="pattern-grid" width="{{patternSize}}" height="{{patternSize}}" patternUnits="userSpaceOnUse">
+            <g stroke="green" stroke-width="0.25" opacity="0.125">
+                <line x1="0" x2="16" y1="8" y2="8"/>
+                <line y1="0" y2="16" x1="8" x2="8"/>
+            </g>
+        </pattern>
+    </defs>
+    {# bg #}
+    <rect width="100%" height="100%" fill="white"/>
+    {# bg pattern #}
+    <rect width="100%" height="100%" fill="url(#pattern-grid)"/>
+    <g filter="url(#filter-scrible)">
+        <g transform="translate(32 16)" stroke-linecap="round" stroke-width="0.5">
+            {% set n = 16 %}
+            {% set yStep = (192) / n %}
+            {% set prevY = 0 %}
+            {% set
+            prevEnd = 0 %}
+            {# the begining #}
+            <circle cx="-8" r="2"/>
+            {% for i in range(0, n) %}
+                {# set the x distance - - #}
+                {% set d = ([1, 6] | rand) * 16 %}
+                {% if i % 2 %}
+                    {% set d = prevEnd - d%}
+                {% else %}
+                    {% set d = prevEnd + d%}
+                {% endif %}
+                {% set d = [d, 0, 192] | clamp %}
+                {# set the x distance - - #}
+                {# set y distance - - #}
+                {% set yOffset = ([1, 3] | rand) * 8 %}
+
+                <g transform="translate(0 {{ prevY }})">
+                    <circle cx="{{ prevEnd }}" r="1" fill=""/>
+                    <line x1="{{ prevEnd }}" x2="{{ d }}" stroke="black" stroke-dasharray="{{ '2' if [0,2] | rand }}"/>
+                    <path d="M{{ d }},0 a1,1 0 0 {{0 if i%2 else 1}} 0 {{ yOffset }}"/>
+                    <circle cx="{{ d }}" r="1" fill=""/>
+                </g>
+                {% set prevY = prevY + yOffset %}
+                {% set prevEnd = d %}
+            {% endfor %}
+
+            {# the end #}
+            <g transform="translate(0 {{ prevY }})">
+                <g transform="translate({{prevEnd}} 0)">
+                    <line y1="0" y2="16" stroke="black"/>
+                    <g>
+                        <circle r="1"/>
+                        <circle cy="16" r="1"/>
+                        <circle cy="24" r="3"/>
+                    </g>
+                    <rect x="4" y="0" width="{{256 - prevEnd - 60}}" height="16"/>
+                </g>
+            </g>
+
+            {# connect the loose ends #}
+            <g stroke="red" fill="none" >
+                <circle cx="{{prevEnd}}" cy="{{prevY+24}}" r="1" fill="red"/>
+                <circle cx="-8" r="0.5" fill="red"/>
+                <path d="
+            M{{prevEnd}},{{prevY+24}}
+            A1,1 0 0 0 -8 0
+            "/>
+            </g>
+
+        </g>
+    </g>
+
+    {# grain overlay #}
+    <rect width="100%" height="100%" filter="url(#filter-grain)" opacity="0.3"/>
+    {# debug frame #}
+    <rect id="debug-frame" width="100%" height="100%" fill="none" stroke="#0003" stroke-width="1" stroke-dasharray="4"
+/>
+
+</svg>
+{% endedge %}

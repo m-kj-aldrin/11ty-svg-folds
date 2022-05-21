@@ -1,0 +1,9 @@
+# example netlify.toml
+[build]
+  command = "eleventy"
+  functions = "netlify/functions"
+  publish = "_site"
+
+[[edge_functions]]
+  function = "eleventy-edge"
+  path = "/"
