@@ -1,8 +1,9 @@
 {
   "scripts": {
-    "dev": "npx @11ty/eleventy --incremental --serve"
+    "dev": "NODE_ENV=dev npx @11ty/eleventy --incremental --serve"
   },
   "devDependencies": {
-    "@11ty/eleventy": "^2.0.0-canary.11"
+    "@11ty/eleventy": "^2.0.0-canary.11",
+    "html-minifier-terser": "7.0.0-alpha.2"
   }
 }

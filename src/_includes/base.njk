@@ -1,14 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Document</title>
-    <link rel="stylesheet" href="/css/reset.css"/>
-    <link rel="stylesheet" href="/css/main.css"/>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Folds</title>
+
+    {# inline css #}
+    {% if env.dev %}
+      <link rel="stylesheet" href="/css/reset.css">
+      <link rel="stylesheet" href="/css/main.css">
+      <script src="/js/main.js"></script>
+    {% else %}
+      <style>
+        {% include "../css/reset.css" %}
+      </style>
+      <style>
+        {% include "../css/main.css" %}
+      </style>
+    {% endif %}
+
   </head>
   <body>
+
     <div style="grid-row: 1; grid-column: 1; z-index: 1" class="settings">
       <form action="" style="line-height: 1">
         <fieldset class="graph-settings settings-group">
@@ -33,82 +47,33 @@
         </label>
         <label>
           <span>image height</span>
-          <input type="number" name="resy" id="image-height" min="512" max="4096" step="512" value="2048"/>
+          <input type="number" name="resy" id="image-height" min="512" max="4096" step="512" value="2048" />
         </label>
         <label>
           <span>file name sufix</span>
-          <input type="text" name="sufix" id="image-sufix" value=""/>
+          <input type="text" name="sufix" id="image-sufix" value="" />
         </label>
-        <button onclick="savePng(event)" > save png</button>
-        <button onclick="saveSvg(event)" > save svg</button>
+        <div>
+          <button onclick="savePng(event)" > save png</button>
+          <button onclick="saveSvg(event)" > save svg</button>
+        </div>
       </fieldset>
     </div>
-    </div>
-    <main style="grid-row: 1/3; grid-column: 1/3">
-      {{ content | safe }}
-    </main>
-    <script>
-      function saveSvg(e) {
-        e.preventDefault()
-        const illu = document.querySelector("#svg-illu");
-        const serializer = new XMLSerializer();
-        const cleanString = serializer
-          .serializeToString(illu)
-          .replace(/>[\s]*</g, "><");
-        const file = new Blob([cleanString], {type: "image/svg+xml;charset=utf-8"});
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(file);
-        a.download = `svg-illu-0.svg`;
-        a.click();
-      }
-      function savePng(e) {
-        e.preventDefault();
+  </div>
+</div>
+<main style="grid-row: 1/3; grid-column: 1/3">
+  {{ content | safe }}
+</main>
 
-        const dim = {
-          w: document
-            .querySelector("#image-width")
-            .value,
-          h: document
-            .querySelector("#image-height")
-            .value
-        };
-        const debugFrame = document.querySelector("#debug-frame");
-        debugFrame
-          ?.setAttribute("opacity", "0");
-        const svgText = new XMLSerializer()
-          .serializeToString(document.querySelector("#svg-illu"))
-          .replace('width="100%"', `width="${dim.w}"`)
-          .replace('height="100%"', `height="${dim.h}"`);
+{# inline script #}
+{% if not env.dev %}
+  <script>
+    {% include "../js/main.js" %}
+  </script>
+{% endif %}
+<script>
+  {% include "../js/saveTo.js" %}
+</script>
 
-        const blob = new Blob([svgText], {type: "image/svg+xml;charset=utf-8"});
-
-        const url = URL.createObjectURL(blob);
-
-        const canvas = document.createElement("canvas");
-        canvas.width = dim.w;
-        canvas.height = dim.h;
-
-        const ctx = canvas.getContext("2d");
-        let img = new Image();
-
-        img.onload = function () {
-          ctx.drawImage(img, 0, 0);
-          const png = canvas.toDataURL("image/png");
-          URL.revokeObjectURL(url);
-          const a = document.createElement("a");
-          a.href = png;
-          a.download = `svg-illu-0.${dim
-            .w}x${dim
-            .h}${document
-            .querySelector('#image-sufix')
-            .value}.png`;
-          a.click();
-          debugFrame
-            ?.setAttribute("opacity", "1");
-        };
-
-        img.src = url;
-      }
-    </script>
-  </body>
+</body>
 </html>

@@ -31,7 +31,14 @@ export default async (request, context) => {
       // eleventyConfig.addFilter("json", obj => JSON.stringify(obj, null, 2));
     });
 
-    return await edge.handleResponse();
+    const res = await edge.handleResponse();
+    const b = await res.text();
+    const mini = b
+      .replace(/\>[\r\n ]+\</g, "><")
+      .replace(/(<.*?>)|\s+/g, (m, $1) => ($1 ? $1 : " "))
+      .trim();
+    
+    return new Response(mini,res);
   } catch (e) {
     console.log("ERROR", { e });
     return context.next(e);
