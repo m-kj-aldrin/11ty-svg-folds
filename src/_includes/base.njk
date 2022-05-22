@@ -9,65 +9,40 @@
     <link rel="stylesheet" href="/css/main.css"/>
   </head>
   <body>
-    <div style="grid-row: 1; grid-column: 1; z-index: 1">
+    <div style="grid-row: 1; grid-column: 1; z-index: 1" class="settings">
       <form action="" style="line-height: 1">
-        <fieldset
-          style="width: max-content; padding: 0.5rem; border-radius: 6px"
-        >
-          <legend>Image settings</legend>
-          <div style="display: flex; flex-direction: column">
-            <label for="" style="display: flex; gap: 0.5em">
-              <span>image width</span>
-              <input
-                style="margin-left: auto"
-                type="number"
-                name="resx"
-                id="image-width"
-                min="512"
-                max="4096"
-                step="512"
-                value="2048"
-/>
-            </label>
-            <label for="" style="display: flex; gap: 0.5em">
-              <span>image height</span>
-              <input
-                style="margin-left: auto"
-                type="number"
-                name="resy"
-                id="image-height"
-                min="512"
-                max="4096"
-                step="512"
-                value="2048"
-/>
-            </label>
-            <label for="" style="display: flex; gap: 0.5em">
-              <span>file name sufix</span>
-              <input
-                style="margin-left: auto"
-                type="text"
-                name="sufix"
-                id="image-sufix"
-                value=""
-/>
-            </label>
-          </div>
-          <button
-            style="display: block; margin-top: 0.5rem; width: max-content"
-            onclick="savePng(event)"
-          >
-            save png
-          </button>
-          <hr style="margin-block: 0.75rem"/>
-          <button
-            style="display: block; margin-top: 0.5rem; width: max-content"
-            onclick="saveSvg(event)"
-          >
-            save svg
-          </button>
+        <fieldset class="graph-settings settings-group">
+          <legend>Graph params</legend>
+          <label for="" style="display:flex;gap:0.5em">
+            <span>number of folds</span>
+            <input type="number" name="n-folds" value="{% edge "njk" %}{{nFolds}}{% endedge %}" min="2" max="96">
+          </label>
+          <label for="" style="display:flex;gap:0.5em">
+            <span>number of folds</span>
+            <input type="number" name="y-stride" value="{% edge "njk" %}{{yStride}}{% endedge %}" min="1" max="32">
+          </label>
+          <button>reload</button>
         </fieldset>
       </form>
+
+      <fieldset class="file-settings settings-group">
+        <legend>File settings</legend>
+        <label for="" style="display: flex; gap: 0.5em">
+          <span>image width</span>
+          <input style="margin-left: auto" type="number" name="resx" id="image-width" min="512" max="4096" step="512" value="2048" />
+        </label>
+        <label for="" style="display: flex; gap: 0.5em">
+          <span>image height</span>
+          <input style="margin-left: auto" type="number" name="resy" id="image-height" min="512" max="4096" step="512" value="2048"/>
+        </label>
+        <label for="" style="display: flex; gap: 0.5em">
+          <span>file name sufix</span>
+          <input style="margin-left: auto" type="text" name="sufix" id="image-sufix" value=""/>
+        </label>
+        <button onclick="savePng(event)" > save png</button>
+        <button onclick="saveSvg(event)" > save svg</button>
+      </fieldset>
+    </div>
     </div>
     <main style="grid-row: 1/3; grid-column: 1/3">
       {{ content | safe }}
@@ -122,7 +97,11 @@
           URL.revokeObjectURL(url);
           const a = document.createElement("a");
           a.href = png;
-          a.download = `svg-illu-0.${dim.w}x${dim.h}${document.querySelector('#image-sufix').value}.png`;
+          a.download = `svg-illu-0.${dim
+            .w}x${dim
+            .h}${document
+            .querySelector('#image-sufix')
+            .value}.png`;
           a.click();
           debugFrame
             ?.setAttribute("opacity", "1");
