@@ -3,7 +3,7 @@ layout: base.njk
 ---
 
 {% edge "njk" %}
-<svg width="100%" height="100%" viewBox="0 0 256 256" id="svg-illu">
+<svg width="100%" height="100%" viewBox="0 0 256 256" id="svg-illu" style="--primary:#ed3612;--blk:#050101;--dblk:#020000">
     <defs>
         {# filter defs #}
         <filter id="filter-scrible">
@@ -14,7 +14,7 @@ layout: base.njk
                 0 0.25 0 0 0
                 0 0 0 0 0
                 0 0 0 0 0"/>
-            <feDisplacementMap in="SourceGraphic" xChannelSelector="R" yChannelSelector="G" scale="1.5"/>
+            <feDisplacementMap in="SourceGraphic" xChannelSelector="R" yChannelSelector="G" scale="1"/>
             <feGaussianBlur stdDeviation="0.05"/>
             <feColorMatrix type="matrix"
             values="
@@ -47,10 +47,9 @@ layout: base.njk
     <rect width="100%" height="100%" fill="white"/>
     {# bg pattern #}
     <rect width="100%" height="100%" fill="url(#pattern-grid)"/>
-    <g filter="url(#filter-scrible)">
+    <g filter="url(#filter-scrible)" >
         <g transform="translate(32 16)" stroke-linecap="round" stroke-width="0.5">
-            {% set n = 16 %}
-            {% set yStep = (192) / n %}
+            {% set n = 20 %}
             {% set prevY = 0 %}
             {% set
             prevEnd = 0 %}
@@ -67,13 +66,20 @@ layout: base.njk
                 {% set d = [d, 0, 192] | clamp %}
                 {# set the x distance - - #}
                 {# set y distance - - #}
-                {% set yOffset = ([1, 3] | rand) * 8 %}
+                {% set yOffset = ([1, 5] | rand) * 4 %}
 
-                <g transform="translate(0 {{ prevY }})">
-                    <circle cx="{{ prevEnd }}" r="1" fill=""/>
-                    <line x1="{{ prevEnd }}" x2="{{ d }}" stroke="black" stroke-dasharray="{{ '2' if [0,2] | rand }}"/>
-                    <path d="M{{ d }},0 a1,1 0 0 {{0 if i%2 else 1}} 0 {{ yOffset }}"/>
-                    <circle cx="{{ d }}" r="1" fill=""/>
+                <g transform="translate(0 {{ prevY }})" fill="var(--blk)" stroke="var(--blk)">
+                    <circle cx="{{ prevEnd }}" r="1" stroke="none"/>
+                    <line x1="{{ prevEnd }}" x2="{{ d }}"  stroke-dasharray="{{ '2' if [0,2] | rand }}"/>
+
+                    {% set dosh = not[0, 4] | rand %}
+                    {% set filld = not[0, 3] | rand %}
+
+                    <path fill="{{'none' if not filld }}" stroke-dasharray="{{'4' if dosh }}"  d="M{{ d }},0 a1,1 0 0 {{0 if i%2 else 1}} 0 {{ yOffset }}"/>
+                    {% if dosh and not filld%}
+                        <circle fill="var(--primary)" cx="{{d}}" cy="{{yOffset/2}}" r="1" stroke="none"/>
+                    {% endif %}
+                    <circle cx="{{ d }}" r="1" fill="" stroke="none"/>
                 </g>
                 {% set prevY = prevY + yOffset %}
                 {% set prevEnd = d %}
@@ -82,21 +88,43 @@ layout: base.njk
             {# the end #}
             <g transform="translate(0 {{ prevY }})">
                 <g transform="translate({{prevEnd}} 0)">
-                    <line y1="0" y2="16" stroke="black"/>
-                    <g>
+                    <line y1="0" y2="16" stroke="var(--blk)"/>
+                    <g fill="var(--blk)">
                         <circle r="1"/>
                         <circle cy="16" r="1"/>
                         <circle cy="24" r="3"/>
                     </g>
-                    <rect x="4" y="0" width="{{256 - prevEnd - 60}}" height="16"/>
+
+                    {# low bar #}
+                    {% set rightEdge = 256 - prevEnd - 64 %}
+                    <rect x="4" y="0" width="{{rightEdge - 4}}" height="16" fill="var(--dblk)"/>
+
+                    {# luffar dots #}
+                    {% set nDots = [2, 6] | rand %}
+                    {% set dotYStep = 16 / nDots %}
+
+                    <g fill="white" transform="translate({{rightEdge - dotYStep/2}} {{dotYStep/2}})">
+                        {% for y in range(0, nDots) %}
+                            <g transform="translate(0 {{y * dotYStep}})">
+                                {% for x in range(0, nDots) %}
+                                    <circle cx="-{{x * dotYStep}}" r="{{dotYStep/4}}" fill="white"/>
+                                {% endfor %}
+                            </g>
+                        {% endfor %}
+                    </g>
                 </g>
             </g>
 
             {# connect the loose ends #}
-            <g stroke="red" fill="none" >
+            <g stroke="var(--primary)" fill="none" >
                 <circle cx="{{prevEnd}}" cy="{{prevY+24}}" r="1" fill="red"/>
                 <circle cx="-8" r="0.5" fill="red"/>
-                <path d="
+                {% set signal = "" %}
+                {% for s in range(0,5) %}
+                   {% set signal = signal + ([1,3] | rand) * 4 + " " %} 
+                {% endfor %}
+                <path stroke-linecap="butt" stroke-dasharray="128 8 {{signal}} 8" stroke-dashoffset="0"
+                 d="
             M{{prevEnd}},{{prevY+24}}
             A1,1 0 0 0 -8 0
             "/>
