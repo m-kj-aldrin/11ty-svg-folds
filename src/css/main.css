@@ -17,10 +17,20 @@ fieldset {
   padding: 0.5rem;
   border-radius: 6px;
 }
+.settings{
+  width: max-content;
+}
 .settings-group {
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+.settings-group label{
+  display: flex;
+}
+.settings-group label input{
+  margin-left: auto;
 }
 button {
   cursor: pointer;

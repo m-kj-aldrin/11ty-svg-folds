@@ -13,11 +13,11 @@
       <form action="" style="line-height: 1">
         <fieldset class="graph-settings settings-group">
           <legend>Graph params</legend>
-          <label for="" style="display:flex;gap:0.5em">
+          <label>
             <span>number of folds</span>
             <input type="number" name="n-folds" value="{% edge "njk" %}{{nFolds}}{% endedge %}" min="2" max="96">
           </label>
-          <label for="" style="display:flex;gap:0.5em">
+          <label>
             <span>y stride</span>
             <input type="number" name="y-stride" value="{% edge "njk" %}{{yStride}}{% endedge %}" min="1" max="32">
           </label>
@@ -27,17 +27,17 @@
 
       <fieldset class="file-settings settings-group">
         <legend>File settings</legend>
-        <label for="" style="display: flex; gap: 0.5em">
+        <label>
           <span>image width</span>
-          <input style="margin-left: auto" type="number" name="resx" id="image-width" min="512" max="4096" step="512" value="2048" />
+          <input type="number" name="resx" id="image-width" min="512" max="4096" step="512" value="2048" />
         </label>
-        <label for="" style="display: flex; gap: 0.5em">
+        <label>
           <span>image height</span>
-          <input style="margin-left: auto" type="number" name="resy" id="image-height" min="512" max="4096" step="512" value="2048"/>
+          <input type="number" name="resy" id="image-height" min="512" max="4096" step="512" value="2048"/>
         </label>
-        <label for="" style="display: flex; gap: 0.5em">
+        <label>
           <span>file name sufix</span>
-          <input style="margin-left: auto" type="text" name="sufix" id="image-sufix" value=""/>
+          <input type="text" name="sufix" id="image-sufix" value=""/>
         </label>
         <button onclick="savePng(event)" > save png</button>
         <button onclick="saveSvg(event)" > save svg</button>
